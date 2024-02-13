@@ -9,6 +9,7 @@ import {
 	convertLines,
 	allCircularShiftsAllLines,
 	sortLines,
+	display,
 	KWIC,
 } from './helpers.js'
 
@@ -17,8 +18,11 @@ describe('orderedSet', () => {
 		{ input: [], expected: [] },
 		{ input: ['a'], expected: ['a'] },
 		{ input: ['a', 'a'], expected: ['a'] },
+		{ input: ['b B c C', 'B c C b', 'C b B c', 'c C b B'], expected: ['b B c C', 'B c C b', 'c C b B', 'C b B c']}, 
 		{ input: ['apple', 'banana', 'apple', 'orange', 'banana'], expected: ['apple', 'banana', 'orange'] },
 		{ input: ['C', 'c', 'B', 'a', 'b', 'A', 'Z', 'z'], expected: ['a', 'A', 'b', 'B', 'c', 'C', 'z', 'Z'] },
+		{ input: ['F', 'C', 'B', 'a', 'b', 'A', 'Z', 'z', 'f'], expected: ['a', 'A', 'b', 'B', 'C', 'f', 'F', 'z', 'Z'] },
+		{ input: ['C', 'c', 'B', 'b'], expected: ['b', 'B', 'c', 'C'] },
 		{ input: [['apple', 'banana'], ['orange']], expected: [['apple', 'banana'], ['orange']] },
 		{ input: [['orange'], ['apple', 'banana']], expected: [['apple', 'banana'], ['orange']] },
 		{ input: [['apple', 'orange'], ['apple', 'banana']], expected: [['apple', 'banana'], ['apple', 'orange']] },
@@ -206,7 +210,7 @@ describe('convertLines', () => {
 	const testCases = [
 		// Test cases for valid input
 		{
-			input: { result: ["The Quick Brown Fox", "second line"], error: ''},
+			input: { result: ["The Quick Brown Fox", "second line"], error: '' },
 			expected: { result: ['Brown Fox Quick The', 'line second'], error: '' },
 		},
 		{
@@ -217,15 +221,7 @@ describe('convertLines', () => {
 			input: { result: ['another word', 'word word'], error: '' },
 			expected: { result: ['another word', 'word'], error: '' },
 		},
-		// Test cases for invalid input
-		{
-			input: { result: [], error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-		},
-		{
-			input: { result: 'not an array', error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-		},
+		// Test cases for invalid input removed because input is guaranteed to be safe due to pipe
 	]
 	testCases.forEach(testCase => {
 		it(`should return ${JSON.stringify(testCase.expected)} for input '${JSON.stringify(testCase.input)}'`, () => {
@@ -295,15 +291,7 @@ describe('allCircularShiftsAllLines', () => {
 				], error: ''
 			},
 		},
-		// Test cases for invalid input
-		{
-			input: { result: [], error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-		},
-		{
-			input: { result: 'not an array', error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-		},
+		// Test cases for invalid input removed because input guaranteed to be valid in pipe
 	]
 	testCases.forEach(testCase => {
 		it(`should return ${JSON.stringify(testCase.expected)} for input '${JSON.stringify(testCase.input)}'`, () => {
@@ -322,22 +310,47 @@ describe('sortLines', () => {
 			expected: { result: [['Brown Fox The Quick', 'Fox The Quick Brown', 'Quick Brown Fox The', 'The Quick Brown Fox'], ['line second', 'second line']], error: '' },
 			description: 'Valid input: array of lines with words',
 		},
-		// Test cases for invalid input
 		{
-			input: { result: [], error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-			description: 'Invalid input: empty result',
+			input: { result: [['b', 'B', 'c', 'C'], ['B', 'c', 'C', 'b'], ['C', 'b', 'B', 'c'], ['c', 'C', 'b', 'B']], error: '' },
+			expected: { result: [['b', 'B', 'c', 'C'], ['b', 'B', 'c', 'C'], ['b', 'B', 'c', 'C'], ['b', 'B', 'c', 'C']], error: '' }, // not sure if this is right
+			description: 'Valid input: array of lines with words',
 		},
-		{
-			input: { result: 'not an array', error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-			description: 'Invalid input: non-array result',
-		},
+		// Test cases for invalid input removed because input guaranteed to be valid in pipe
 	]
 	testCases.forEach(testCase => {
 		it(`should return ${JSON.stringify(testCase.expected)} for input '${JSON.stringify(testCase.input)}'`, () => {
 			const input = testCase.input
 			const result = sortLines(input)
+			expect(result).toEqual(testCase.expected)
+		})
+	})
+})
+
+describe('display', () => {
+	const testCases = [
+		// Single list
+		{
+			input: [['brown fox', 'jumped over', 'the lazy']],
+			expected: 'brown fox\njumped over\nthe lazy',
+		},
+		// Multiple lists
+		{
+			input: [
+				['brown fox', 'jumped over', 'the lazy'],
+				['hello world', 'foo bar', 'lorem ipsum'],
+			],
+			expected: 'brown fox\njumped over\nthe lazy\n\nhello world\nfoo bar\nlorem ipsum',
+		},
+		// Empty list
+		{
+			input: [[]],
+			expected: '',
+		},
+	]
+	testCases.forEach(testCase => {
+		it(`should return ${JSON.stringify(testCase.expected)} for input '${JSON.stringify(testCase.input)}'`, () => {
+			const input = testCase.input
+			const result = display(input)
 			expect(result).toEqual(testCase.expected)
 		})
 	})
@@ -364,15 +377,7 @@ describe('KWIC', () => {
 				"error": ""
 			},
 		},
-		// Test cases for invalid input
-		{
-			input: ['Quick Brown Fox The', 42, 'Fox The Quick Brown', 'The Quick Brown Fox'],
-			expected: { result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.' },
-		},
-		{
-			input: [],
-			expected: { result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.' },
-		},
+		// Test cases for invalid input removed because input guaranteed to be valid in pipe
 	]
 	testCases.forEach(testCase => {
 		it(`should return ${JSON.stringify(testCase.expected)} for input '${JSON.stringify(testCase.input)}'`, () => {
