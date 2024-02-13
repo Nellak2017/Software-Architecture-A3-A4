@@ -171,10 +171,10 @@ describe('circularShift', () => {
 
 describe('allCircularShifts', () => {
 	const testCases = [
-		{ input: ['a', 'b', 'c'], expected: ['b c a', 'c a b', 'a b c'] },
-		{ input: ['a'], expected: ['a'] },
-		{ input: ['abac', 'back'], expected: ['back abac', 'abac back'] },
-		{ input: [], expected: [] },
+		{ input: 'a b c', expected: ['b c a', 'c a b', 'a b c'] },
+		{ input: 'a', expected: ['a'] },
+		{ input: 'abac back', expected: ['back abac', 'abac back'] },
+		{ input: '', expected: [''] },
 	]
 	testCases.forEach(testCase => {
 		it(`should return ${testCase.expected} for input '${testCase.input}'`, () => {
@@ -206,16 +206,16 @@ describe('convertLines', () => {
 	const testCases = [
 		// Test cases for valid input
 		{
-			input: { result: ['word word', 'word word'], error: '' },
-			expected: { result: [['word'], ['word']], error: '' },
+			input: { result: ["The Quick Brown Fox", "second line"], error: ''},
+			expected: { result: ['Brown Fox Quick The', 'line second'], error: '' },
 		},
 		{
 			input: { result: ['word', 'word word'], error: '' },
-			expected: { result: [['word'], ['word']], error: '' },
+			expected: { result: ['word', 'word'], error: '' },
 		},
 		{
 			input: { result: ['another word', 'word word'], error: '' },
-			expected: { result: [['another', 'word'], ['word']], error: '' },
+			expected: { result: ['another word', 'word'], error: '' },
 		},
 		// Test cases for invalid input
 		{
@@ -270,8 +270,8 @@ describe('allCircularShiftsAllLines', () => {
 		{
 			input: {
 				result: [
-					['word'],
-					['word']
+					'word',
+					'word'
 				], error: ''
 			},
 			expected: {
@@ -284,8 +284,8 @@ describe('allCircularShiftsAllLines', () => {
 		{
 			input: {
 				result: [
-					['The', 'Quick', 'Brown', 'Fox'],
-					['second', 'line']
+					'The Quick Brown Fox',
+					'second line'
 				], error: ''
 			},
 			expected: {
@@ -348,7 +348,7 @@ describe('KWIC', () => {
 		// Test cases for valid input
 		{
 			input: ['The Quick Brown Fox', 'second line'],
-			expected:  {
+			expected: {
 				"result": [
 					[
 						"Brown Fox Quick The",
@@ -367,11 +367,11 @@ describe('KWIC', () => {
 		// Test cases for invalid input
 		{
 			input: ['Quick Brown Fox The', 42, 'Fox The Quick Brown', 'The Quick Brown Fox'],
-			expected: {result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.'},
+			expected: { result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.' },
 		},
 		{
 			input: [],
-			expected: {result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.'},
+			expected: { result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.' },
 		},
 	]
 	testCases.forEach(testCase => {
