@@ -14,19 +14,22 @@ import {
 } from './helpers.js'
 
 describe('orderedSet', () => {
+	// expects: list of strings (list of lines)
+	// returns: list of set of strings sorted (list of lines sorted)
 	const testCases = [
 		{ input: [], expected: [] },
 		{ input: ['a'], expected: ['a'] },
 		{ input: ['a', 'a'], expected: ['a'] },
-		{ input: ['b B c C', 'B c C b', 'C b B c', 'c C b B'], expected: ['b B c C', 'B c C b', 'c C b B', 'C b B c']}, 
+		{ input: ['b B c C', 'B c C b', 'C b B c', 'c C b B'], expected: ['b B c C', 'B c C b', 'c C b B', 'C b B c'] },
+		{ input: ['z z b a', 'z z a b', 'z a B', 'z z Z Z Z'], expected: ['z a B', 'z z a b', 'z z b a', 'z z Z Z Z'] },
 		{ input: ['apple', 'banana', 'apple', 'orange', 'banana'], expected: ['apple', 'banana', 'orange'] },
 		{ input: ['C', 'c', 'B', 'a', 'b', 'A', 'Z', 'z'], expected: ['a', 'A', 'b', 'B', 'c', 'C', 'z', 'Z'] },
 		{ input: ['F', 'C', 'B', 'a', 'b', 'A', 'Z', 'z', 'f'], expected: ['a', 'A', 'b', 'B', 'C', 'f', 'F', 'z', 'Z'] },
 		{ input: ['C', 'c', 'B', 'b'], expected: ['b', 'B', 'c', 'C'] },
-		{ input: [['apple', 'banana'], ['orange']], expected: [['apple', 'banana'], ['orange']] },
-		{ input: [['orange'], ['apple', 'banana']], expected: [['apple', 'banana'], ['orange']] },
-		{ input: [['apple', 'orange'], ['apple', 'banana']], expected: [['apple', 'banana'], ['apple', 'orange']] },
-		{ input: [['apple', 'banana'], ['apple', 'orange']], expected: [['apple', 'banana'], ['apple', 'orange']] },
+		{ input: ['apple', 'banana', 'orange'], expected: ['apple', 'banana', 'orange'] },
+		{ input: ['orange', 'apple', 'banana'], expected: ['apple', 'banana', 'orange'] },
+		{ input: ['apple', 'orange', 'apple', 'banana'], expected: ['apple', 'banana', 'orange'] },
+		{ input: ['apple', 'banana', 'apple', 'orange'], expected: ['apple', 'banana', 'orange'] },
 		{ input: ['zello world', 'bext line', 'line 3'], expected: ['bext line', 'line 3', 'zello world'] },
 	]
 	testCases.forEach(testCase => {
@@ -39,7 +42,7 @@ describe('orderedSet', () => {
 
 	// verify that input is not changed
 	it('should not change the input', () => {
-		const input = [1, 2, 3, 4, 4, 3, 2, 1]
+		const input = ['apple', 'orange', 'apple', 'banana']
 		const inputCopy = [...input]
 		orderedSet(input)
 		// Verify that the input array is unchanged by reference
@@ -175,9 +178,9 @@ describe('circularShift', () => {
 
 describe('allCircularShifts', () => {
 	const testCases = [
-		{ input: 'a b c', expected: ['b c a', 'c a b', 'a b c'] },
+		{ input: 'a b c', expected: ['a b c', 'b c a', 'c a b'] },
 		{ input: 'a', expected: ['a'] },
-		{ input: 'abac back', expected: ['back abac', 'abac back'] },
+		{ input: 'abac back', expected: ['abac back', 'back abac'] },
 		{ input: '', expected: [''] },
 	]
 	testCases.forEach(testCase => {
@@ -207,20 +210,42 @@ describe('processInput', () => {
 })
 
 describe('convertLines', () => {
+	// convertLines should simply do a set operation on the lines themselves
+	// convertLines should also remove extraneous whitespaces on the 
 	const testCases = [
 		// Test cases for valid input
 		{
 			input: { result: ["The Quick Brown Fox", "second line"], error: '' },
-			expected: { result: ['Brown Fox Quick The', 'line second'], error: '' },
+			expected: { result: ["The Quick Brown Fox", "second line"], error: '' },
 		},
 		{
 			input: { result: ['word', 'word word'], error: '' },
-			expected: { result: ['word', 'word'], error: '' },
+			expected: { result: ['word', 'word word'], error: '' },
 		},
 		{
 			input: { result: ['another word', 'word word'], error: '' },
-			expected: { result: ['another word', 'word'], error: '' },
+			expected: { result: ['another word', 'word word'], error: '' },
 		},
+		{
+			input: { result: ["The Quick Brown Fox", "The Quick Brown Fox"], error: '' },
+			expected: { result: ["The Quick Brown Fox"], error: '' },
+		},
+		{
+			input: { result: ["The Quick Brown     Fox", "The Quick Brown     Fox"], error: '' },
+			expected: { result: ["The Quick Brown Fox"], error: '' },
+		}, // removes unnecessary spaces and does set operation
+		{
+			input: { result: ["The Quick Brown     Fox", "The Quick Brown Fox"], error: '' },
+			expected: { result: ["The Quick Brown Fox"], error: '' },
+		}, // removes unnecessary spaces and does set operation, if 2 strings are equivalante ignoring whitespace, they are the same
+		{
+			input: { result: ["The Quick Brown     Fox", '', "The Quick Brown Fox"], error: '' },
+			expected: { result: ["The Quick Brown Fox"], error: '' },
+		}, // also removes empty lines
+		{
+			input: { result: ["The Quick Brown     Fox", '   ', "The Quick Brown Fox"], error: '' },
+			expected: { result: ["The Quick Brown Fox"], error: '' },
+		}, // also removes empty lines, no matter how many spaces there are
 		// Test cases for invalid input removed because input is guaranteed to be safe due to pipe
 	]
 	testCases.forEach(testCase => {
@@ -286,11 +311,25 @@ describe('allCircularShiftsAllLines', () => {
 			},
 			expected: {
 				result: [
-					['Quick Brown Fox The', 'Brown Fox The Quick', 'Fox The Quick Brown', 'The Quick Brown Fox'],
-					['line second', 'second line']
+					['The Quick Brown Fox', 'Quick Brown Fox The', 'Brown Fox The Quick', 'Fox The Quick Brown'],
+					['second line', 'line second']
 				], error: ''
 			},
 		},
+		{
+			input: {
+				result: [
+					'Pipes and filters',
+					'Software Architecture and Design'
+				], error: ''
+			},
+			expected: {
+				result: [
+					['Pipes and filters', 'and filters Pipes', 'filters Pipes and'],
+					['Software Architecture and Design', 'Architecture and Design Software', 'and Design Software Architecture', 'Design Software Architecture and']
+				], error: ''
+			},
+		}, // Test case based on professor's email
 		// Test cases for invalid input removed because input guaranteed to be valid in pipe
 	]
 	testCases.forEach(testCase => {
@@ -303,17 +342,61 @@ describe('allCircularShiftsAllLines', () => {
 })
 
 describe('sortLines', () => {
+	// takes a list of lines, removes duplicate lines, then sorts them line-by-line 
+	// 	and character-by-character, and returns a result
 	const testCases = [
 		// Test cases for valid input
 		{
-			input: { result: [['Quick Brown Fox The', 'Brown Fox The Quick', 'Fox The Quick Brown', 'The Quick Brown Fox'], ['line second', 'second line']], error: '' },
-			expected: { result: [['Brown Fox The Quick', 'Fox The Quick Brown', 'Quick Brown Fox The', 'The Quick Brown Fox'], ['line second', 'second line']], error: '' },
-			description: 'Valid input: array of lines with words',
+			input: {
+				result: [
+					[
+						'The Quick Brown Fox',
+						'Quick Brown Fox The',
+						'Brown Fox The Quick',
+						'Fox The Quick Brown',
+					],
+					[
+						'second line',
+						'line second',
+					],
+				], error: ''
+			},
+			expected: {
+				result: [
+					'Brown Fox The Quick',
+					'Fox The Quick Brown',
+					'line second',
+					'Quick Brown Fox The',
+					'second line',
+					'The Quick Brown Fox',
+				], error: ''
+			},
 		},
 		{
-			input: { result: [['b', 'B', 'c', 'C'], ['B', 'c', 'C', 'b'], ['C', 'b', 'B', 'c'], ['c', 'C', 'b', 'B']], error: '' },
-			expected: { result: [['b', 'B', 'c', 'C'], ['b', 'B', 'c', 'C'], ['b', 'B', 'c', 'C'], ['b', 'B', 'c', 'C']], error: '' }, // not sure if this is right
-			description: 'Valid input: array of lines with words',
+			input: {
+				result: [
+					[
+						'b B c C',
+						'B c C b',
+						'c C b B',
+						'C b B c',
+					],
+					[
+						'C b B c',
+						'b B c C',
+						'B c C b',
+						'c C b B',
+					]
+				], error: ''
+			},
+			expected: {
+				result: [
+					'b B c C',
+					'B c C b',
+					'c C b B',
+					'C b B c',
+				], error: ''
+			}, // Duplicates are removed!
 		},
 		// Test cases for invalid input removed because input guaranteed to be valid in pipe
 	]
@@ -330,22 +413,34 @@ describe('display', () => {
 	const testCases = [
 		// Single list
 		{
-			input: [['brown fox', 'jumped over', 'the lazy']],
+			input: ['brown fox', 'jumped over', 'the lazy'],
 			expected: 'brown fox\njumped over\nthe lazy',
 		},
 		// Multiple lists
 		{
 			input: [
-				['brown fox', 'jumped over', 'the lazy'],
-				['hello world', 'foo bar', 'lorem ipsum'],
+				'brown fox', 'jumped over', 'the lazy','hello world', 'foo bar', 'lorem ipsum',
 			],
-			expected: 'brown fox\njumped over\nthe lazy\n\nhello world\nfoo bar\nlorem ipsum',
+			expected: 'brown fox\njumped over\nthe lazy\nhello world\nfoo bar\nlorem ipsum',
 		},
 		// Empty list
 		{
 			input: [[]],
 			expected: '',
 		},
+		// Based on professor's email
+		{
+			input: [
+				"and Design Software Architecture",
+				"and filters Pipes",
+				"Architecture and Design Software",
+				"Design Software Architecture and",
+				"filters Pipes and",
+				"Pipes and filters",
+				"Software Architecture and Design"
+			],
+			expected: 'and Design Software Architecture\nand filters Pipes\nArchitecture and Design Software\nDesign Software Architecture and\nfilters Pipes and\nPipes and filters\nSoftware Architecture and Design'
+		}
 	]
 	testCases.forEach(testCase => {
 		it(`should return ${JSON.stringify(testCase.expected)} for input '${JSON.stringify(testCase.input)}'`, () => {
@@ -363,20 +458,31 @@ describe('KWIC', () => {
 			input: ['The Quick Brown Fox', 'second line'],
 			expected: {
 				"result": [
-					[
-						"Brown Fox Quick The",
-						"Fox Quick The Brown",
-						"Quick The Brown Fox",
-						"The Brown Fox Quick"
-					],
-					[
-						"line second",
-						"second line"
-					]
+					"Brown Fox The Quick",
+					"Fox The Quick Brown",
+					"line second",
+					"Quick Brown Fox The",
+					"second line",
+					"The Quick Brown Fox",
 				],
 				"error": ""
 			},
 		},
+		{
+			input: ['Pipes and filters', 'Software Architecture and Design'],
+			expected: {
+				"result": [
+					"and Design Software Architecture",
+					"and filters Pipes",
+					"Architecture and Design Software",
+					"Design Software Architecture and",
+					"filters Pipes and",
+					"Pipes and filters",
+					"Software Architecture and Design",
+				],
+				"error": ""
+			},
+		}, // Test case based on Professor's email
 		// Test cases for invalid input removed because input guaranteed to be valid in pipe
 	]
 	testCases.forEach(testCase => {

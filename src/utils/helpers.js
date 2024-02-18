@@ -12,39 +12,39 @@ export const isValidLines = lines => Array.isArray(lines) && lines.length >= 1 &
 export const pipe = (...f) => x => f.reduce((acc, fn) => fn(acc), x) // Convienience function to help make the pipeline clear
 export const mapResult = (result, logic, condition = true) => result.error === '' || condition ? ({ result: logic, error: '' }) : ({ result: [], error: result.error }) // Convienience function to simplify working with results (result -> result)
 export const customSort = (a, b) => {
-	// Convert both strings to lowercase for comparison
-	const lowerA = String(a).toLowerCase()
-	const lowerB = String(b).toLowerCase()
-
-	// If the lowercase versions are equal, use default comparison
-	return lowerA === lowerB
-		? String(a).localeCompare(String(b))
-		: lowerA.localeCompare(lowerB) // Compare based on ASCII value
+	const charPairs = [...Array.from({ length: Math.min(a.length, b.length) }, (_, i) => [a[i], b[i]])]
+	const index = charPairs.findIndex(([charA, charB]) => charA !== charB)
+	return index !== -1
+		? charPairs[index][0].localeCompare(charPairs[index][1])
+		: a.length - b.length
 }
+
 export const circularShift = line => line.length <= 1 ? line : [...line.slice(1), line[0]] // Circular shift moves the first word to the end of the line
-export const allCircularShifts = line => line.split(' ').reduce((acc, _, i) => {
+export const allCircularShifts = line => {
 	const splitLine = line.split(' ')
-	const shiftedLine = splitLine.slice(i).concat(splitLine.slice(0, i))
-	const shiftedWord = circularShift(shiftedLine)
-	return [...acc, shiftedWord.join(' ')] // remove .join(' ') to have words in a line like this: ['The', 'Quick', 'Brown', 'Fox'] instead of 'The Quick Brown Fox'
-}, []) // All circular shifts for each word in a line and returns that list
-export const orderedSet = (list, compareFx = customSort) => [...new Set(list)].sort(compareFx) // Sort function
+	return splitLine
+		.reduce((acc, _, i) => i === splitLine.length - 1
+			? acc
+			: [...acc, circularShift([...splitLine.slice(i), ...splitLine.slice(0, i)]).join(' ')]
+			, [line]) // this ternary is done so we can get the correct order with 0th first
+} // All circular shifts for each word in a line and returns that list
+export const orderedSet = (lines, compareFx = customSort) => [...new Set(lines)].sort(compareFx) // Sort function
 
 // ---- Result Returning functions (* -> result<list<string>>). (Note: Only source of pipe has input validation!)
 export const processInput = lines => isValidLines(lines)
 	? { result: lines, error: '' }
 	: { result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.' }
-export const convertLines = linesResult => mapResult(linesResult, linesResult.result.map(line => orderedSet(line.split(' ')).join(' ')))
+export const convertLines = linesResult => mapResult(linesResult, [...new Set(linesResult.result.map(line => line.replace(/\s+/g, ' ')))].filter(line => line.trim() !== ''))
 export const allCircularShiftsAllLines = linesResult => mapResult(linesResult, linesResult.result.map(line => allCircularShifts(line)))
-export const sortLines = linesResult => mapResult(linesResult, linesResult.result.map(line => orderedSet(line)))
+export const sortLines = linesResult => mapResult(linesResult, orderedSet(linesResult.result.flat()))
 
 // ---- Display function
-export const display = lists => lists.map(list => list.join('\n')).join('\n\n')
+export const display = list => list.join('\n')
 
 // ---- KWIC Pipeline as per instructions
 export const KWIC = lines => pipe(
 	processInput, // verifies input is correct and returns result 
-	convertLines, // converts lines from strings to ordered set of words
+	convertLines, // converts lines to set and remove extra whitespaces and empty lines (removes duplicates, extra whitespaces, and empty lines)
 	allCircularShiftsAllLines, // makes a list of list containing all the circular shifts for each line
-	sortLines, // takes a list of lines (array of words), then converts each to a string to sort them, then converts the lines back to a list and returns a result
+	sortLines, // takes a list of lines, removes duplicate lines, then sorts them line-by-line and character-by-character, and returns a result
 )(lines)
