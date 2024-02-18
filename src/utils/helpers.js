@@ -18,7 +18,6 @@ export const customSort = (a, b) => {
 		? charPairs[index][0].localeCompare(charPairs[index][1])
 		: a.length - b.length
 }
-
 export const circularShift = line => line.length <= 1 ? line : [...line.slice(1), line[0]] // Circular shift moves the first word to the end of the line
 export const allCircularShifts = line => {
 	const splitLine = line.split(' ')
@@ -35,7 +34,7 @@ export const processInput = lines => isValidLines(lines)
 	? { result: lines, error: '' }
 	: { result: [], error: 'Input must be an array of lines (strings with words in them).\nError happened at processInput.' }
 export const convertLines = linesResult => mapResult(linesResult, [...new Set(linesResult.result.map(line => line.replace(/\s+/g, ' ')))].filter(line => line.trim() !== ''))
-export const allCircularShiftsAllLines = linesResult => mapResult(linesResult, linesResult.result.map(line => allCircularShifts(line)))
+export const allCircularShiftsAllLines = linesResult => mapResult(linesResult, linesResult.result.map(line => allCircularShifts(line)).flat())
 export const sortLines = linesResult => mapResult(linesResult, orderedSet(linesResult.result.flat()))
 
 // ---- Display function

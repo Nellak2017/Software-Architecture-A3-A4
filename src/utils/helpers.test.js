@@ -256,34 +256,6 @@ describe('convertLines', () => {
 		})
 	})
 })
-/*
-describe('convertWords', () => {
-	const testCases = [
-		// Test cases for valid input
-		{
-			input: { result: [['word'], ['word']], error: '' },
-			expected: { result: [['word'], ['word']], error: '' },
-		},
-		{
-			input: { result: ['word', 'word word'], error: '' },
-			expected: { result: [['word'], ['word']], error: '' },
-		},
-		{
-			input: { result: ['another word', 'word word'], error: '' },
-			expected: { result: [['another','word'], ['word']], error: '' },
-		},
-		// Test cases for invalid input
-		{
-			input: { result: [], error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-		},
-		{
-			input: { result: 'not an array', error: 'Invalid input' },
-			expected: { result: [], error: 'Invalid input' },
-		},
-	]
-})
-*/
 
 describe('allCircularShiftsAllLines', () => {
 	const testCases = [
@@ -292,13 +264,13 @@ describe('allCircularShiftsAllLines', () => {
 			input: {
 				result: [
 					'word',
-					'word'
+					'wordtwo'
 				], error: ''
 			},
 			expected: {
 				result: [
-					['word'],
-					['word']
+					'word',
+					'wordtwo'
 				], error: ''
 			},
 		},
@@ -311,8 +283,8 @@ describe('allCircularShiftsAllLines', () => {
 			},
 			expected: {
 				result: [
-					['The Quick Brown Fox', 'Quick Brown Fox The', 'Brown Fox The Quick', 'Fox The Quick Brown'],
-					['second line', 'line second']
+					'The Quick Brown Fox', 'Quick Brown Fox The', 'Brown Fox The Quick', 'Fox The Quick Brown',
+					'second line', 'line second'
 				], error: ''
 			},
 		},
@@ -325,8 +297,8 @@ describe('allCircularShiftsAllLines', () => {
 			},
 			expected: {
 				result: [
-					['Pipes and filters', 'and filters Pipes', 'filters Pipes and'],
-					['Software Architecture and Design', 'Architecture and Design Software', 'and Design Software Architecture', 'Design Software Architecture and']
+					'Pipes and filters', 'and filters Pipes', 'filters Pipes and',
+					'Software Architecture and Design', 'Architecture and Design Software', 'and Design Software Architecture', 'Design Software Architecture and'
 				], error: ''
 			},
 		}, // Test case based on professor's email
@@ -349,16 +321,12 @@ describe('sortLines', () => {
 		{
 			input: {
 				result: [
-					[
 						'The Quick Brown Fox',
 						'Quick Brown Fox The',
 						'Brown Fox The Quick',
 						'Fox The Quick Brown',
-					],
-					[
 						'second line',
 						'line second',
-					],
 				], error: ''
 			},
 			expected: {
@@ -375,18 +343,14 @@ describe('sortLines', () => {
 		{
 			input: {
 				result: [
-					[
 						'b B c C',
 						'B c C b',
 						'c C b B',
 						'C b B c',
-					],
-					[
 						'C b B c',
 						'b B c C',
 						'B c C b',
 						'c C b B',
-					]
 				], error: ''
 			},
 			expected: {
