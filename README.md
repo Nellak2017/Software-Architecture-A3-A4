@@ -1,3 +1,17 @@
+# Table of Contents
+
+- [Summary](#summary)
+- [The KWIC system](#the-kwic-system)
+  * [Functional Requirements](#functional-requirements)
+  * [Non-Functional Requirements](#non-functional-requirements)
+- [The Deliverable](#the-deliverable)
+  * [Deployment](#deployment)
+  * [Typical interactions](#typical-interactions)
+- [User Guide](#user-guide)
+  * [Computing KWIC Index and viewing the results](#computing-kwic-index-and-viewing-the-results)
+  * [Clearing the Input/Output](#clearing-the-input-output)
+- [Setting up the Key Word In Context System to Run Locally](#setting-up-the-key-word-in-context-system-to-run-locally)
+
 # Summary
 
 The Key Word In Context (KWIC) system is designed to generate an index of all circular shifts of input lines, sorted in ascending alphabetical order. Developed as part of a larger web search engine project, the KWIC system accepts ordered sets of lines, where each line consists of words which are just a series of characters.
@@ -60,7 +74,7 @@ Figure 1. Demonstration of inputting text into the KWIC Text Area Input
 
 Figure 2. Demonstration of output text from the example input
  
-## Clearing the Input/Output
+## Clearing the Input Output
 
 1.	To clear the input text, click the “Reset Input” button.
 
