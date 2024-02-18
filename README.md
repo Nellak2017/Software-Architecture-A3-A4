@@ -1,70 +1,115 @@
-# Getting Started with Create React App
+# Summary
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The Key Word In Context (KWIC) system is designed to generate an index of all circular shifts of input lines, sorted in ascending alphabetical order. Developed as part of a larger web search engine project, the KWIC system accepts ordered sets of lines, where each line consists of words which are just a series of characters.
 
-## Available Scripts
+# The KWIC system
 
-In the project directory, you can run:
+## Functional Requirements
 
-### `npm start`
+•	Accept an ordered set of lines as input.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+•	Circularly shift each line by repeatedly removing the first word and appending it at the end of the line.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+•	Output a list of all circular shifts of all lines in ascending alphabetical order.
 
-### `npm test`
+## Non-Functional Requirements
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+•	Understandable, portable, scalable, and reusable
 
-### `npm run build`
+•	User-friendly, responsive, and adaptive
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# The Deliverable
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The KWIC system consists of a user interface where users can input lines of text, compute the KWIC index, and view the results.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Deployment
 
-### `npm run eject`
+•	The KWIC system can be accessed through a web browser.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+•	Some local setup is required since I will not host this toy project.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Typical interactions
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1.	Input: Users enter lines of text into the provided text area.
+2.	Compute: After inputting text, users click the “Compute” button to generate the KWIC index.
+3.	Output: The KWIC index is displayed in a read-only text area below the input.
+4.	Clear Input/Output: Users can clear the input or output by clicking the respective “Reset Input” or “Reset Output” buttons.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# User Guide
 
-## Learn More
+## Computing KWIC Index and viewing the results
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1.	To Input Text, enter lines of text into the text area provided, by clicking inside the text area and then using your keyboard or other input method.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+•	Each line consists of words separated by spaces.
 
-### Code Splitting
+•	Only characters a…z, A…Z are accepted by the system, others will be erased.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+![image](https://github.com/Nellak2017/Software-Architecture-A3-A4/assets/46159829/7fee1a57-81e3-4698-9b47-e4005df249b3)
 
-### Analyzing the Bundle Size
+Figure 1. Demonstration of inputting text into the KWIC Text Area Input 
+ 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2.	After Inputting Text, click the “Compute” button to generate the KWIC Index.
 
-### Making a Progressive Web App
+•	The system will process the input and display the result in the output text area that is read only.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+•	Each line in the KWIC Index represents a circular shift of the original text, and sorted in alphabetical order.
 
-### Advanced Configuration
+![image](https://github.com/Nellak2017/Software-Architecture-A3-A4/assets/46159829/b1a16ad2-7543-463e-8b43-6a9b00378d29) 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Figure 2. Demonstration of output text from the example input
+ 
+## Clearing the Input/Output
 
-### Deployment
+1.	To clear the input text, click the “Reset Input” button.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+•	It will only clear the input text.
 
-### `npm run build` fails to minify
+![image](https://github.com/Nellak2017/Software-Architecture-A3-A4/assets/46159829/00440150-2211-464e-bd05-1277bcad592e) 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Figure 3. Demonstration of clearing input text from the example input
+
+2.	To clear the output text, click the “Reset Output” button.
+
+•	It will only clear the output text.
+
+![image](https://github.com/Nellak2017/Software-Architecture-A3-A4/assets/46159829/420f9eb8-29ed-4989-8742-c497c7e20689) 
+
+Figure 4. Demonstration of clearing output text from the example input
+ 
+# Setting up the Key Word In Context System to Run Locally
+
+Because the Key Word In Context System is not hosted online with a Domain, you must run it from the zip file that is provided from Github in Local Host 3000.
+
+1.	Download the source code file from Github
+
+2.	In the terminal, where the project is located, do the command:
+
+```bash
+npm install
+```
+
+•	This will download all the dependencies in the KWIC project.
+
+•	Note that this will require 288 MB of memory on your PC.
+
+3.	In the terminal, do the command:
+
+```bash
+npm run dev
+```
+
+•	This will run your program in localhost:3000
+
+•	Ensure that nothing else is running on localhost:3000 before doing this
+
+4.	Navigate to localhost:3000 in your preferred browser.
+
+•	This will let you run the KWIC program in development mode.
+
+•	If you want a production build, you will instead do the npm run build command.
+ 
+![image](https://github.com/Nellak2017/Software-Architecture-A3-A4/assets/46159829/1e7507e7-e982-496e-994c-97c3b479de49)
+
+Figure 5. KWIC system displayed in your browser at localhost:3000
