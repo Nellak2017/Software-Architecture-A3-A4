@@ -11,6 +11,7 @@ import {
 	sortLines,
 	display,
 	KWIC,
+	filterNoiseWords,
 } from './helpers.js'
 
 describe('orderedSet', () => {
@@ -456,4 +457,49 @@ describe('KWIC', () => {
 			expect(result).toEqual(testCase.expected)
 		})
 	})
+})
+
+describe('filterNoiseWords', () => {
+	const testCases = [
+		{
+		  input: [
+			"The quick brown fox",
+			"A lazy dog jumps",
+			"An apple a day keeps the doctor away",
+			"And now for something completely different"
+		  ],
+		  expectedOutput: [
+		  ]
+		},
+		{
+		  input: [
+			"In the beginning was the word",
+			"word was with God",
+			"And the word was God"
+		  ],
+		  expectedOutput: [
+			"word was with God",
+		  ]
+		},
+		{
+		  input: [
+			"tale of two cities",
+			"not to be, that is the question",
+			"frying pan and into the fire"
+		  ],
+		  expectedOutput: [
+			"tale of two cities",
+			"not to be, that is the question",
+			"frying pan and into the fire"
+		  ]
+		}
+	  ]
+
+	  test.each(testCases)('filters out noise words from input lines', ({ input, expectedOutput }) => {
+		// Act
+		const result = filterNoiseWords({ result: input, error: '' })
+	
+		// Assert
+		expect(result.result).toEqual(expectedOutput)
+	  })
 })

@@ -1,3 +1,6 @@
+// ---- Constants
+// hash table for maximum efficiency in looking it up
+export const NOISE_WORDS = { "a": true, "an": true, "the": true, "and": true, "or": true, "of": true, "to": true, "be": true, "is": true, "in": true, "out": true, "by": true, "as": true, "at": true, "off": true }
 // ---- Predicates
 export const isLetter = char => !char || typeof char !== 'string' || char.length > 1 ? false : /^[a-zA-Z]/.test(char) // A letter is a..zA..Z only
 export const isWord = word => typeof word === 'string' && word.length >= 1 && Array.from(word).every(isLetter) // A word is a string of characters 
@@ -36,14 +39,25 @@ export const processInput = lines => isValidLines(lines)
 export const convertLines = linesResult => mapResult(linesResult, [...new Set(linesResult.result.map(line => line.replace(/\s+/g, ' ')))].filter(line => line.trim() !== ''))
 export const allCircularShiftsAllLines = linesResult => mapResult(linesResult, linesResult.result.map(line => allCircularShifts(line)).flat())
 export const sortLines = linesResult => mapResult(linesResult, orderedSet(linesResult.result.flat()))
+export const filterNoiseWords = (linesResult, noiseWords = NOISE_WORDS) => mapResult(linesResult, linesResult.result.filter(line =>
+	!noiseWords[line.trim().split(' ')[0].toLowerCase()]))
 
 // ---- Display function
 export const display = list => list.join('\n')
 
-// ---- KWIC Pipeline as per instructions
+// ---- KWIC Pipeline as per instructions (Version 1)
 export const KWIC = lines => pipe(
 	processInput, // verifies input is correct and returns result 
 	convertLines, // converts lines to set and remove extra whitespaces and empty lines (removes duplicates, extra whitespaces, and empty lines)
 	allCircularShiftsAllLines, // makes a list of list containing all the circular shifts for each line
 	sortLines, // takes a list of lines, removes duplicate lines, then sorts them line-by-line and character-by-character, and returns a result
+)(lines)
+
+// ---- KWIC Pipeline as per instructions (Version 2, A5)
+export const KWICv2 = lines => pipe(
+	processInput, // verifies input is correct and returns result 
+	convertLines, // converts lines to set and remove extra whitespaces and empty lines (removes duplicates, extra whitespaces, and empty lines)
+	allCircularShiftsAllLines, // makes a list of list containing all the circular shifts for each line
+	sortLines, // takes a list of lines, removes duplicate lines, then sorts them line-by-line and character-by-character, and returns a result
+	filterNoiseWords, // No line prefix of (lower/upper case): “a”, “an”, “the”, “and”, “or”, “of”, “to”, “be”, “is”, “in”, “out”, “by”, “as”, “at”, “off”
 )(lines)

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { KWIC, display, pipe } from '../../utils/helpers'
+import { display, pipe, KWICv2 } from '../../utils/helpers'
 import '../../styles/globals.css'
 
 function App() {
@@ -9,8 +9,8 @@ function App() {
   const handleInputChange = e => setInputText(e.target.value.replace(/[^a-zA-Z\n ]/g, '')) // Ensure only a..zA..Z characters are entered
   const handleResetInput = () => setInputText('')
   const handleResetOutput = () => setOutputText('')
-  const handleKWIC = () => setOutputText(pipe(display)(KWIC(inputText.trim().split('\n').filter(line => line.trim() !== '')).result))
-  
+  const handleKWIC = () => setOutputText(pipe(display)(KWICv2(inputText.trim().split('\n').filter(line => line.trim() !== '')).result))
+
   return (
     <div className="flex justify-center items-center h-screen bg-blue-100 overflow-y-auto p-16">
       <div className="flex flex-col space-y-4">
