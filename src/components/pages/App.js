@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { display, pipe, KWICv2 } from '../../utils/helpers'
+import { KWICv3 } from '../../utils/OO_KWIC'
 import '../../styles/globals.css'
 
 function App() {
@@ -11,6 +12,30 @@ function App() {
   const handleResetOutput = () => setOutputText('')
   const handleKWIC = () => setOutputText(pipe(display)(KWICv2(inputText.trim().split('\n').filter(line => line.trim() !== '')).result))
 
+  const handleKWICOOP = () => {
+    const processedInput = inputText.trim().split('\n').filter(line => line.trim() !== '')
+    setOutputText(pipe(display)(KWICv3(processedInput)))
+  }
+
+  const handleKWICPerf = () => {
+    const processedInput = inputText.trim().split('\n').filter(line => line.trim() !== '')
+    const startTimeFP = performance.now()
+    const FPPipesAndFilters = pipe(display)(KWICv2(processedInput).result)
+    const endTimeFP = performance.now()
+
+    const startTimeOOP = performance.now()
+    const OOPPipesAndFilters = pipe(display)(KWICv3(processedInput))
+    const endTimeOOP = performance.now()
+
+    const FPPerf = endTimeFP - startTimeFP
+    const OOPPerf = endTimeOOP - startTimeOOP
+
+    console.log(`FP Pipes and Filter performance: ${FPPerf.toFixed(4)} ms`)
+    console.log(`OOP Pipes and Filter performance: ${OOPPerf.toFixed(4)} ms`)
+    console.log(`${FPPerf < OOPPerf ? 'FP Pipes and filter was faster' : 'OOP Pipes and filter was faster'}`)
+
+    setOutputText(pipe(display)(KWICv3(processedInput)))
+  }
   return (
     <div className="flex justify-center items-center h-screen bg-blue-100 overflow-y-auto p-16">
       <div className="flex flex-col space-y-4">
@@ -29,7 +54,7 @@ function App() {
         <div className='flex items-center justify-center'>
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            onClick={handleKWIC}
+            onClick={handleKWICPerf}
           >
             Compute
           </button>

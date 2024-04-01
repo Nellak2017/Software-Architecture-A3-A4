@@ -53,7 +53,7 @@ export const KWIC = lines => pipe(
 	sortLines, // takes a list of lines, removes duplicate lines, then sorts them line-by-line and character-by-character, and returns a result
 )(lines)
 
-// ---- KWIC Pipeline as per instructions (Version 2, A5)
+// ---- KWIC Pipeline as per instructions (Version 2, A5) (Pipe and Filter with extra filterNoiseWords)
 export const KWICv2 = lines => pipe(
 	processInput, // verifies input is correct and returns result 
 	convertLines, // converts lines to set and remove extra whitespaces and empty lines (removes duplicates, extra whitespaces, and empty lines)
@@ -61,3 +61,6 @@ export const KWICv2 = lines => pipe(
 	sortLines, // takes a list of lines, removes duplicate lines, then sorts them line-by-line and character-by-character, and returns a result
 	filterNoiseWords, // No line prefix of (lower/upper case): “a”, “an”, “the”, “and”, “or”, “of”, “to”, “be”, “is”, “in”, “out”, “by”, “as”, “at”, “off”
 )(lines)
+
+// ---- KWIC Pipeline as per instructions (Version 3, A7) (Shared Data and OOP)
+// TODO: Import from OO file
