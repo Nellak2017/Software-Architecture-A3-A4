@@ -88,8 +88,8 @@ export class CircularShift {
 	}
 
 	setup() {
-		for (let i = 0; i < this.lineStorage.lines.length; i++) {
-			const line = this.lineStorage.lines[i]
+		for (const element of this.lineStorage.lines) {
+			const line = element
 			for (let j = 0; j < line.length; j++) {
 				const shift = []
 				for (let k = 0; k < line.length; k++) {
@@ -171,7 +171,7 @@ class Output {
 	}
 
 	generateKWICIndex() {
-		for (let i = 0; i < this.alphabetizer.alphabetizedLines.length; i++) {
+		for (const element of this.alphabetizer.alphabetizedLines) {
 			return this.alphabetizer.alphabetizedLines
 		}
 	}

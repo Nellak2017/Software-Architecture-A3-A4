@@ -1,84 +1,82 @@
 import React, { useState } from 'react'
 import { display, pipe, KWICv2 } from '../../utils/helpers'
-import { KWICv3 } from '../../utils/OO_KWIC'
 import '../../styles/globals.css'
+
+import axios from 'axios'
 
 function App() {
   const [inputText, setInputText] = useState('')
   const [outputText, setOutputText] = useState('')
+  const [dbOutputText, setDBOutputText] = useState('')
 
   const handleInputChange = e => setInputText(e.target.value.replace(/[^a-zA-Z\n ]/g, '')) // Ensure only a..zA..Z characters are entered
   const handleResetInput = () => setInputText('')
   const handleResetOutput = () => setOutputText('')
+  const handleResetDBOutput = () => setDBOutputText('')
   const handleKWIC = () => setOutputText(pipe(display)(KWICv2(inputText.trim().split('\n').filter(line => line.trim() !== '')).result))
 
-  const handleKWICOOP = () => {
-    const processedInput = inputText.trim().split('\n').filter(line => line.trim() !== '')
-    setOutputText(pipe(display)(KWICv3(processedInput)))
-  }
+  // const preProcessInputMicrominer -> converts input to form needed by KWIC
+  // const postProcessInputMicrominer -> appends URL to each line of regular output
+  // const handleMicrominer -> sets output text to be the new KWIC version (A8 Microminer)
+  // make API functions file and import it here 
+  // make API POST ((descriptor + URL), output)
+  // make API GET ((descriptor + URL)) -> output
+  // make API DELETE ((descriptor + URL))
 
-  const handleKWICPerf = () => {
-    const processedInput = inputText.trim().split('\n').filter(line => line.trim() !== '')
-    const startTimeFP = performance.now()
-    const FPPipesAndFilters = pipe(display)(KWICv2(processedInput).result)
-    const endTimeFP = performance.now()
-
-    const startTimeOOP = performance.now()
-    const OOPPipesAndFilters = pipe(display)(KWICv3(processedInput))
-    const endTimeOOP = performance.now()
-
-    const FPPerf = endTimeFP - startTimeFP
-    const OOPPerf = endTimeOOP - startTimeOOP
-
-    console.log(`FP Pipes and Filter performance: ${FPPerf.toFixed(4)} ms`)
-    console.log(`OOP Pipes and Filter performance: ${OOPPerf.toFixed(4)} ms`)
-    console.log(`${FPPerf < OOPPerf ? 'FP Pipes and filter was faster' : 'OOP Pipes and filter was faster'}`)
-
-    setOutputText(pipe(display)(KWICv3(processedInput)))
-  }
   return (
-    <div className="flex justify-center items-center h-screen bg-blue-100 overflow-y-auto p-16">
-      <div className="flex flex-col space-y-4">
-        <div className='text-center'>
-          <h1 className='text-3xl font-bold'>Key Word In Context System</h1>
+    <div className="styledAppContainer">
+      <div className="content">
+        <div>
+          <h1>Key Word In Context System</h1>
         </div>
-        <div className="text-center">
-          <h2 className="text-lg font-semibold">Input</h2>
+        <div>
+          <h2>Input</h2>
         </div>
         <textarea
-          className="w-93 h-80 p-4 border border-gray-300 rounded-lg resize-none"
           value={inputText}
           onChange={handleInputChange}
           placeholder="Enter text here..."
         ></textarea>
-        <div className='flex items-center justify-center'>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            onClick={handleKWICPerf}
-          >
+        <div className='buttons'>
+          <button onClick={handleKWIC}>
             Compute
           </button>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            onClick={handleResetInput}
-          >
+          <button onClick={handleResetInput}>
             Reset Input
           </button>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            onClick={handleResetOutput}
-          >
+          <button onClick={handleResetOutput}>
             Reset Output
           </button>
+
+          <button onClick={handleResetDBOutput}>
+            Reset DB Output
+          </button>
+          <button onClick={() => console.log('Get DB Output not implemented yet')}>
+            Get DB Output
+          </button>
+          <button onClick={() => console.log('Set DB Output not implemented yet')}>
+            Set DB Ouput
+          </button>
+          <button onClick={() => console.log('Set DB Output not implemented yet')}>
+            Delete DB Ouput
+          </button>
+
         </div>
-        <div className="text-center">
-          <h2 className="text-lg font-semibold">Output</h2>
+        <div>
+          <h2>Output</h2>
         </div>
         <textarea
-          className="w-93 h-80 p-4 border border-gray-300 rounded-lg resize-none"
           value={outputText}
           readOnly
           placeholder="Results will appear here..."
+        ></textarea>
+        <div>
+          <h2>Output from Database</h2>
+        </div>
+        <textarea
+          value={dbOutputText}
+          readOnly
+          placeholder="Results will appear here when you load them in from the database..."
         ></textarea>
       </div>
     </div>
