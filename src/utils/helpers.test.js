@@ -3,6 +3,7 @@ import {
 	isLetter,
 	isWord,
 	isLine,
+	isValidLines,
 	circularShift,
 	allCircularShifts,
 	processInput,
@@ -204,7 +205,7 @@ describe('processInput', () => {
 	testCases.forEach(testCase => {
 		it(`should return ${JSON.stringify(testCase.expected)} for input '${JSON.stringify(testCase.input)}'`, () => {
 			const input = testCase.input
-			const result = processInput(input)
+			const result = processInput(isValidLines)(input)
 			expect(result).toEqual(testCase.expected)
 		})
 	})
@@ -322,12 +323,12 @@ describe('sortLines', () => {
 		{
 			input: {
 				result: [
-						'The Quick Brown Fox',
-						'Quick Brown Fox The',
-						'Brown Fox The Quick',
-						'Fox The Quick Brown',
-						'second line',
-						'line second',
+					'The Quick Brown Fox',
+					'Quick Brown Fox The',
+					'Brown Fox The Quick',
+					'Fox The Quick Brown',
+					'second line',
+					'line second',
 				], error: ''
 			},
 			expected: {
@@ -344,14 +345,14 @@ describe('sortLines', () => {
 		{
 			input: {
 				result: [
-						'b B c C',
-						'B c C b',
-						'c C b B',
-						'C b B c',
-						'C b B c',
-						'b B c C',
-						'B c C b',
-						'c C b B',
+					'b B c C',
+					'B c C b',
+					'c C b B',
+					'C b B c',
+					'C b B c',
+					'b B c C',
+					'B c C b',
+					'c C b B',
 				], error: ''
 			},
 			expected: {
@@ -384,7 +385,7 @@ describe('display', () => {
 		// Multiple lists
 		{
 			input: [
-				'brown fox', 'jumped over', 'the lazy','hello world', 'foo bar', 'lorem ipsum',
+				'brown fox', 'jumped over', 'the lazy', 'hello world', 'foo bar', 'lorem ipsum',
 			],
 			expected: 'brown fox\njumped over\nthe lazy\nhello world\nfoo bar\nlorem ipsum',
 		},
@@ -462,44 +463,44 @@ describe('KWIC', () => {
 describe('filterNoiseWords', () => {
 	const testCases = [
 		{
-		  input: [
-			"The quick brown fox",
-			"A lazy dog jumps",
-			"An apple a day keeps the doctor away",
-			"And now for something completely different"
-		  ],
-		  expectedOutput: [
-		  ]
+			input: [
+				"The quick brown fox",
+				"A lazy dog jumps",
+				"An apple a day keeps the doctor away",
+				"And now for something completely different"
+			],
+			expectedOutput: [
+			]
 		},
 		{
-		  input: [
-			"In the beginning was the word",
-			"word was with God",
-			"And the word was God"
-		  ],
-		  expectedOutput: [
-			"word was with God",
-		  ]
+			input: [
+				"In the beginning was the word",
+				"word was with God",
+				"And the word was God"
+			],
+			expectedOutput: [
+				"word was with God",
+			]
 		},
 		{
-		  input: [
-			"tale of two cities",
-			"not to be, that is the question",
-			"frying pan and into the fire"
-		  ],
-		  expectedOutput: [
-			"tale of two cities",
-			"not to be, that is the question",
-			"frying pan and into the fire"
-		  ]
+			input: [
+				"tale of two cities",
+				"not to be, that is the question",
+				"frying pan and into the fire"
+			],
+			expectedOutput: [
+				"tale of two cities",
+				"not to be, that is the question",
+				"frying pan and into the fire"
+			]
 		}
-	  ]
+	]
 
-	  test.each(testCases)('filters out noise words from input lines', ({ input, expectedOutput }) => {
+	test.each(testCases)('filters out noise words from input lines', ({ input, expectedOutput }) => {
 		// Act
 		const result = filterNoiseWords({ result: input, error: '' })
-	
+
 		// Assert
 		expect(result.result).toEqual(expectedOutput)
-	  })
+	})
 })
