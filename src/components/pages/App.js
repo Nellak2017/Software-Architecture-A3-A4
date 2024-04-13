@@ -1,9 +1,15 @@
 import React, { useState, useMemo } from 'react'
-import { display, pipe, KWICv2, KWIC, KWICv4 } from '../../utils/helpers'
+import { display, pipe, KWICv4 } from '../../utils/helpers'
 import { preInput } from '../../utils/microminer_helpers.js'
 import '../../styles/globals.css'
-
-import axios from 'axios'
+import {
+  getValues,
+  postValues,
+  deleteValues,
+} from '../../API/api.js'
+import { ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   const [inputText, setInputText] = useState('')
@@ -20,16 +26,74 @@ function App() {
     const [descriptors, URLs] = preInput(input)
     setOutputText(pipe(display)(KWICv4(URLs)(descriptors).result))
   }
-    
+
+  // -- API handlers
+  // NOTE: For the inputStringList of these, we use the input memo since it does further pre-processing than just raw string above
+  const handleGetValues = async (inputStringList) => {
+    const processedGETInput = inputStringList && Array.isArray(inputStringList) ? inputStringList.join('\n') : ''
+    try {
+      const values = await getValues(processedGETInput)
+      console.log(values)
+      if (!values || values?.length === 0) {
+        console.warn('Values returned an empty list. Could not find Stored Output for that input.')
+        toast.warn('Could not find Stored Output for that input.')
+        return
+      }
+      toast.success('Circular shifts fetched successfully')
+      values && values[0] && Array.isArray(values)
+        ? setDBOutputText(values[0])
+        : setDBOutputText(values)
+    } catch (e) {
+      setDBOutputText('Could not fetch for that input. Something unexpected happened. Try another input or Set DB Output.')
+      toast.error('Could not fetch for that input. Something unexpected happened. Try another input or Set DB Output.')
+      console.error(e)
+    }
+  }
+  const handlePostValues = async (inputStringList, outputLines) => {
+    try {
+      if (!inputStringList || !outputLines) { throw new Error('Input string and output lines are required') }
+
+      const processedInput = inputStringList && Array.isArray(inputStringList) ? inputStringList.join('\n') : ''
+      const processedDbOutput = outputLines && typeof outputLines === 'string' ? outputLines.trim().split('\n').filter(line => line.trim() !== '') : []
+      const dbOutputText = processedDbOutput?.join('\n') || ''
+
+      const existingValues = await getValues(processedInput)
+      if (existingValues && existingValues.length > 0) {
+        toast.warn('Input/Output pair already exists in the database')
+        setDBOutputText(dbOutputText)
+        return
+      }
+
+      const res = await postValues(processedInput, processedDbOutput)
+      toast.success(res.message || 'Circular shifts added successfully')
+      setDBOutputText(dbOutputText)
+    } catch (e) {
+      console.error(e)
+      toast.error(e.message || 'Failed to Post values')
+    }
+  }
+  const handleDeleteValues = async (inputStringList) => {
+    const processedInput = inputStringList && Array.isArray(inputStringList) ? inputStringList.join('\n') : ''
+    try {
+      const res = await deleteValues(processedInput)
+      toast.success(res?.message || 'Values deleted successfully')
+      setDBOutputText('')
+    } catch (e) {
+      console.error(e)
+      toast.error('Failed to delete values')
+    }
+  }
+
   // X const splitOnURL = (line, regex='the one we use') => line.split(regex) // ['first', 'last']
   // X const preInput = (lines) => lines.map(line => splitOnURL(line)).reduce(...) // [[...descriptor],[...URL]]
   // R const postInput = (URLs) => (descriptors) => descriptors.map((descriptor, i) => descriptor.concat(URLs[i]))
   // X const KWICv4 = (URLs) => (descriptors) => pipe(KWICv2, postInput(URLs))(descriptors)
   // X const handleMicrominer = () => setsOutputText(pipe(display)(KWICv4(URLs)(descriptors).result))
-  // make API functions file and import it here 
-  // make API POST ((descriptor + URL), output)
-  // make API GET ((descriptor + URL)) -> output
-  // make API DELETE ((descriptor + URL))
+  // X make API functions file and import it here 
+  // X make API POST ((descriptor + URL), output)
+  // X make API GET ((descriptor + URL)) -> output
+  // X make API DELETE ((descriptor + URL))
+  // X Client handlers for API stuff
   // 4+1 view model
   // UML diagram for functional requirements
   // UML component diagram for the architecture style
@@ -38,6 +102,7 @@ function App() {
 
   return (
     <div className="styledAppContainer">
+      <ToastContainer position="bottom-left" autoClose={3000} />
       <div className="content">
         <div>
           <h1>Key Word In Context System</h1>
@@ -64,14 +129,17 @@ function App() {
           <button onClick={handleResetDBOutput}>
             Reset DB Output
           </button>
-          <button onClick={() => console.log('Get DB Output not implemented yet')}>
+          <button onClick={() => handleGetValues(input)}>
             Get DB Output
           </button>
-          <button onClick={() => console.log('Set DB Output not implemented yet')}>
-            Set DB Ouput
+          <button onClick={() => {
+            const [descriptors, URLs] = preInput(input)
+            handlePostValues(input, pipe(display)(KWICv4(URLs)(descriptors).result))
+          }}>
+            Set DB Output
           </button>
-          <button onClick={() => console.log('Set DB Output not implemented yet')}>
-            Delete DB Ouput
+          <button onClick={() => handleDeleteValues(input)}>
+            Delete DB Output
           </button>
 
         </div>
