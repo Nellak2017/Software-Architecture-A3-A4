@@ -7,8 +7,7 @@ import {
   postValues,
   deleteValues,
 } from '../../API/api.js'
-import { ToastContainer } from 'react-toastify'
-import { toast } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
@@ -33,7 +32,6 @@ function App() {
     const processedGETInput = inputStringList && Array.isArray(inputStringList) ? inputStringList.join('\n') : ''
     try {
       const values = await getValues(processedGETInput)
-      console.log(values)
       if (!values || values?.length === 0) {
         console.warn('Values returned an empty list. Could not find Stored Output for that input.')
         toast.warn('Could not find Stored Output for that input.')

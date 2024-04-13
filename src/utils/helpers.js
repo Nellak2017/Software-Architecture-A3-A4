@@ -46,7 +46,7 @@ export const convertLines = linesResult => mapResult(linesResult, [...new Set(li
 export const allCircularShiftsAllLines = linesResult => mapResult(linesResult, linesResult.result.map(line => allCircularShifts(line)).flat())
 export const sortLines = linesResult => mapResult(linesResult, orderedSet(linesResult.result.flat()))
 export const filterNoiseWords = (linesResult, noiseWords = NOISE_WORDS) => mapResult(linesResult, linesResult.result.filter(line =>
-	!noiseWords[line.trim().split(' ')[0].toLowerCase()]))
+	!noiseWords[line.trim().split(' ')[0].toLowerCase().replace(',', '')]))
 
 // ---- Display function
 export const display = list => list.join('\n')

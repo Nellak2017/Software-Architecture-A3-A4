@@ -59,7 +59,7 @@ describe('preInput', () => {
 		},
 	]
 	testCases.forEach(({ description, input, expectedDescriptors, expectedURLs }) => {
-		test(description, () => {
+		test(`${description}`, () => {
 		  const [actualDescriptors, actualURLs] = preInput(input)
 	  
 		  expect(actualDescriptors).toEqual(expectedDescriptors)
