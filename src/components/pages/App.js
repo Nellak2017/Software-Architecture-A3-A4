@@ -82,22 +82,6 @@ function App() {
     }
   }
 
-  // X const splitOnURL = (line, regex='the one we use') => line.split(regex) // ['first', 'last']
-  // X const preInput = (lines) => lines.map(line => splitOnURL(line)).reduce(...) // [[...descriptor],[...URL]]
-  // R const postInput = (URLs) => (descriptors) => descriptors.map((descriptor, i) => descriptor.concat(URLs[i]))
-  // X const KWICv4 = (URLs) => (descriptors) => pipe(KWICv2, postInput(URLs))(descriptors)
-  // X const handleMicrominer = () => setsOutputText(pipe(display)(KWICv4(URLs)(descriptors).result))
-  // X make API functions file and import it here 
-  // X make API POST ((descriptor + URL), output)
-  // X make API GET ((descriptor + URL)) -> output
-  // X make API DELETE ((descriptor + URL))
-  // X Client handlers for API stuff
-  // 4+1 view model
-  // UML diagram for functional requirements
-  // UML component diagram for the architecture style
-  // UML deployment diagram
-  // UML class diagram for design
-
   return (
     <div className="styledAppContainer">
       <ToastContainer position="bottom-left" autoClose={3000} />
