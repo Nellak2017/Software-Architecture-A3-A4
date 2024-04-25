@@ -9,17 +9,15 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-#DATABASE_PATH = os.getenv('DATABASE_URL')
-DATABASE_HOST = '127.0.0.1'# os.getenv('DB_HOST')
+DATABASE_HOST = os.getenv('DB_HOST')
 DATABASE_USER = os.getenv('DB_USER')
 DATABASE_PASSWORD = os.getenv('DB_PASSWORD')
 DATABASE_NAME = os.getenv('DB_NAME')
 
-def connect_to_database(): # db = DATABASE_PATH
+def connect_to_database():
     """Helper function to establish a connection to the MySQL database."""
     try:
         conn = mysql.connector.connect(
-            #host=DATABASE_HOST,
             unix_socket=f'/cloudsql/{DATABASE_HOST}',
             user=DATABASE_USER,
             password=DATABASE_PASSWORD,

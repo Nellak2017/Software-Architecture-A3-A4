@@ -1,4 +1,4 @@
-runtime: python311
+runtime: python39
 entrypoint: gunicorn -b :$PORT app:app
 
 handlers:
@@ -9,4 +9,13 @@ handlers:
   script: auto
 
 env_variables:
-  DATABASE_URL: "../model/microminerDatabase.db"
+  DB_HOST: 'cloudkwic:us-central1:micro-miner-db-instance'
+  DB_USER: 'root'
+  DB_PASSWORD: '123456'
+  DB_NAME: 'microminerDatabase'
+
+# Ensure Cloud SQL Proxy is started as a service
+#services:
+#- name: cloudsqlproxy
+#  url: /cloudsql
+#  script: start_cloudsql_proxy.sh

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_PATH = 'http://localhost:5000/'
+const BASE_PATH = 'https://cloudkwic.uc.r.appspot.com'
 const GET_PATH = `${BASE_PATH}/api/circularshift`
 const POST_PATH = `${BASE_PATH}/api/circularshift`
 const DELETE_PATH = `${BASE_PATH}/api/circularshift`
