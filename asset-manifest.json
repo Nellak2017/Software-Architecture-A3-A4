@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Software-Architecture-A3-A4/static/css/main.f4cd2cc7.css",
+    "main.js": "/Software-Architecture-A3-A4/static/js/main.5015d856.js",
+    "index.html": "/Software-Architecture-A3-A4/index.html",
+    "main.f4cd2cc7.css.map": "/Software-Architecture-A3-A4/static/css/main.f4cd2cc7.css.map",
+    "main.5015d856.js.map": "/Software-Architecture-A3-A4/static/js/main.5015d856.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f4cd2cc7.css",
+    "static/js/main.5015d856.js"
+  ]
+}
