@@ -1,16 +1,34 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS # Import CORS from flask_cors
 import os
-import sqlite3
+import mysql.connector
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-DATABASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model', 'microminerDatabase.db'))
+#DATABASE_PATH = os.getenv('DATABASE_URL')
+DATABASE_HOST = '127.0.0.1'# os.getenv('DB_HOST')
+DATABASE_USER = os.getenv('DB_USER')
+DATABASE_PASSWORD = os.getenv('DB_PASSWORD')
+DATABASE_NAME = os.getenv('DB_NAME')
 
-def connect_to_database(db = DATABASE_PATH):
-    """Helper function to establish a connection to the SQLite database."""
-    return sqlite3.connect(db)
+def connect_to_database(): # db = DATABASE_PATH
+    """Helper function to establish a connection to the MySQL database."""
+    try:
+        conn = mysql.connector.connect(
+            #host=DATABASE_HOST,
+            unix_socket=f'/cloudsql/{DATABASE_HOST}',
+            user=DATABASE_USER,
+            password=DATABASE_PASSWORD,
+            database=DATABASE_NAME,
+        )
+        return conn
+    except mysql.connector.Error as e:
+        print(f"Error connecting to MySQL: {e}")
+        return None
 
 @app.route('/api/circularshift', methods=['POST'])
 def post_circular_shift():
@@ -29,12 +47,14 @@ def post_circular_shift():
 
         # Insert data into the database
         conn = connect_to_database()
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO CircularShift (input, value) VALUES (?, ?)', (input_string, value_string))
-        conn.commit()
-        conn.close()
-
-        return jsonify(message='Circular shifts added successfully')
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO CircularShift (input, value) VALUES (%s, %s)', (input_string, value_string))
+            conn.commit()
+            conn.close()
+            return jsonify(message='Circular shifts added successfully')
+        else:
+            return jsonify(error='Failed to connect to the database'), 500
     except Exception as e:
         return jsonify(error=str(e)), 500
 
@@ -50,18 +70,20 @@ def get_circular_shift():
 
         # Query the database for values associated with the input_string
         conn = connect_to_database()
-        cursor = conn.cursor()
-        cursor.execute('SELECT value FROM CircularShift WHERE input = ?', (input_string,))
-        result = cursor.fetchall()
-        conn.close()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT value FROM CircularShift WHERE input = %s', (input_string,))
+            result = cursor.fetchall()
+            conn.close()
 
-        if not result:
-            return jsonify(message='No values found for the input string'), 404
+            if not result:
+                return jsonify(message='No values found for the input string'), 404
 
-        # Extract values from the result
-        values = [row[0] for row in result]
-
-        return jsonify(values=values)
+            # Extract values from the result
+            values = [row[0] for row in result]
+            return jsonify(values=values)
+        else:
+            return jsonify(error='Failed to connect to the database'), 500
     except Exception as e:
         return jsonify(error=str(e)), 500
 
@@ -77,12 +99,14 @@ def delete_circular_shift():
 
         # Delete the circular shifts from the database
         conn = connect_to_database()
-        cursor = conn.cursor()
-        cursor.execute('DELETE FROM CircularShift WHERE input = ?', (input_string,))
-        conn.commit()
-        conn.close()
-
-        return jsonify(message=f'Circular shifts for input "{input_string}" deleted successfully')
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM CircularShift WHERE input = %s', (input_string,))
+            conn.commit()
+            conn.close()
+            return jsonify(message=f'Circular shifts for input "{input_string}" deleted successfully')
+        else:
+            return jsonify(error='Failed to connect to the database'), 500
     except Exception as e:
         return jsonify(error=str(e)), 500
 
